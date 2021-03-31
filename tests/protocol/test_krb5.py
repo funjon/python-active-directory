@@ -7,7 +7,6 @@
 # "AUTHORS" for a complete overview.
 """Test suite for protocol.krb5."""
 
-from __future__ import absolute_import
 import os
 import stat
 import pexpect

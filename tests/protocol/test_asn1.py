@@ -6,9 +6,7 @@
 # Python-AD is copyright (c) 2007-2008 by the Python-AD authors. See the
 # file "AUTHORS" for a complete overview.
 
-from __future__ import absolute_import
 from activedirectory.protocol import asn1
-import six
 
 from ..base import assert_raises
 
@@ -311,7 +309,7 @@ class TestDecoder(object):
         tag = dec.peek()
         assert tag == (asn1.OctetString, asn1.TypePrimitive, asn1.ClassUniversal)
         tag, val = dec.read()
-        assert isinstance(val, six.binary_type)
+        assert isinstance(val, bytes)
         assert val == b'foo'
 
     def test_null(self):

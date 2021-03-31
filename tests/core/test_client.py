@@ -6,7 +6,6 @@
 # Python-AD is copyright (c) 2007 by the Python-AD authors. See the file
 # "AUTHORS" for a complete overview.
 
-from __future__ import absolute_import
 import pytest
 
 from activedirectory.core.object import activate
@@ -15,7 +14,6 @@ from activedirectory.core.locate import Locator
 from activedirectory.core.constant import AD_USERCTRL_NORMAL_ACCOUNT
 from activedirectory.core.creds import Creds
 from activedirectory.core.exception import Error as ADError
-from six.moves import range
 
 from ..base import assert_raises
 from . import utils

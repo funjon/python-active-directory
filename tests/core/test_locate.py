@@ -6,14 +6,11 @@
 # Python-AD is copyright (c) 2007 by the Python-AD authors. See the file
 # "AUTHORS" for a complete overview.
 
-from __future__ import absolute_import
-from __future__ import print_function
 import math
 import signal
 
 from activedirectory.core.locate import Locator
 from threading import Timer
-from six.moves import range
 
 
 class SRV(object):

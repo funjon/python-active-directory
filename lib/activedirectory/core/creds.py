@@ -6,7 +6,6 @@
 # Python-AD is copyright (c) 2007 by the Python-AD authors. See the file
 # "AUTHORS" for a complete overview.
 
-from __future__ import absolute_import
 import os
 import time
 import logging

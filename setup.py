@@ -10,7 +10,7 @@ from setuptools import setup, Extension
 
 setup(
     name='python-active-directory',
-    version='1.0.5',
+    version='2.0.0',
     description='An Active Directory client library for Python',
     long_description=open('README.rst').read(),
     long_description_content_type='text/x-rst',
@@ -25,12 +25,8 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
     ],
@@ -41,13 +37,11 @@ setup(
         'activedirectory.protocol',
         'activedirectory.util'
     ],
-    tests_require=['nose', 'pexpect'],
-    install_requires=['python-ldap>=3.0', 'dnspython', 'ply>=3.8', 'six'],
+    install_requires=['python-ldap>=3.0', 'dnspython', 'ply>=3.8'],
     ext_modules=[Extension(
         'activedirectory.protocol.krb5',
         ['lib/activedirectory/protocol/krb5.c'],
         libraries=['krb5']
     )],
     zip_safe=False,  # eggs are the devil.
-    test_suite='nose.collector'
 )

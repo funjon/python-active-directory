@@ -6,7 +6,6 @@
 # Python-AD is copyright (c) 2007 by the Python-AD authors. See the file
 # "AUTHORS" for a complete overview.
 
-from __future__ import absolute_import
 import time
 import errno
 import socket
@@ -15,8 +14,6 @@ import random
 
 from ..util import misc
 from . import asn1, ldap
-import six
-from six.moves import range
 
 
 SERVER_PDC = 0x1
@@ -131,7 +128,7 @@ class Decoder(object):
 
     def _set_buffer(self, buffer):
         """Set the current buffer."""
-        if not isinstance(buffer, six.binary_type):
+        if not isinstance(buffer, bytes):
             raise Error('Buffer must be bytes.')
         self.m_buffer = buffer
 

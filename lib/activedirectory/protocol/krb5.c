@@ -91,12 +91,12 @@ k5_get_init_creds_keytab(PyObject *self, PyObject *args)
     /* Resolve keytab */
     if (ktname)
     {
-	code = krb5_kt_resolve(ctx, ktname, &keytab);
-	RETURN_ON_ERROR("krb5_kt_resolve()", code);
+        code = krb5_kt_resolve(ctx, ktname, &keytab);
+        RETURN_ON_ERROR("krb5_kt_resolve()", code);
     } else
     {
-	code = krb5_kt_default(ctx, &keytab);
-	RETURN_ON_ERROR("krb5_kt_resolve()", code);
+        code = krb5_kt_default(ctx, &keytab);
+        RETURN_ON_ERROR("krb5_kt_resolve()", code);
     }
 
     /* Get the credentials. */
@@ -126,24 +126,24 @@ _k5_set_password_error(krb5_data *result_code_string, krb5_data *result_string)
     p1 = malloc(result_code_string->length+1);
     if (p1 == NULL)
     {
-	PyErr_NoMemory();
-	return;
+        PyErr_NoMemory();
+        return;
     }
     if (result_code_string->data)
     {
-	strncpy(p1, result_code_string->data, result_code_string->length);
+        strncpy(p1, result_code_string->data, result_code_string->length);
     }
     p1[result_code_string->length] = '\000';
 
     p2 = malloc(result_string->length+1);
     if (p1 == NULL)
     {
-	PyErr_NoMemory();
-	return;
+        PyErr_NoMemory();
+        return;
     }
     if (result_string->data)
     {
-	strncpy(p1, result_string->data, result_string->length);
+        strncpy(p1, result_string->data, result_string->length);
     }
     p2[result_string->length] = '\000';
 
@@ -180,22 +180,22 @@ k5_set_password(PyObject *self, PyObject *args)
 
     /* Set password */
     code = krb5_set_password_using_ccache(ctx, ccache, newpass, principal,
-					  &result_code, &result_code_string,
-					  &result_string);
+        &result_code, &result_code_string,
+        &result_string);
     RETURN_ON_ERROR("krb5_set_password_using_ccache()", code);
 
     /* Any other error? */
     if (result_code != 0)
     {
-	_k5_set_password_error(&result_code_string, &result_string);
-	return NULL;
+        _k5_set_password_error(&result_code_string, &result_string);
+        return NULL;
     }
 
     /* Free up results. */
     if (result_code_string.data != NULL)
-	free(result_code_string.data);
+        free(result_code_string.data);
     if (result_string.data != NULL)
-	free(result_string.data);
+        free(result_string.data);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -231,26 +231,26 @@ k5_change_password(PyObject *self, PyObject *args)
     krb5_get_init_creds_opt_set_proxiable(&options, 0);
     memset(&creds, 0, sizeof (creds));
     code = krb5_get_init_creds_password(ctx, &creds, principal, oldpass,
-					NULL, NULL, 0, "kadmin/changepw",
-					&options);
+                                        NULL, NULL, 0, "kadmin/changepw",
+                                        &options);
     RETURN_ON_ERROR("krb5_get_init_creds_password()", code);
 
     code = krb5_change_password(ctx, &creds, newpass, &result_code,
-				&result_code_string, &result_string);
+        &result_code_string, &result_string);
     RETURN_ON_ERROR("krb5_change_password()", code);
 
     /* Any other error? */
     if (result_code != 0)
     {
-	_k5_set_password_error(&result_code_string, &result_string);
-	return NULL;
+        _k5_set_password_error(&result_code_string, &result_string);
+        return NULL;
     }
 
     /* Free up results. */
     if (result_code_string.data != NULL)
-	free(result_code_string.data);
+        free(result_code_string.data);
     if (result_string.data != NULL)
-	free(result_string.data);
+        free(result_string.data);
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -273,18 +273,14 @@ k5_cc_default(PyObject *self, PyObject *args)
     name = krb5_cc_get_name(ctx, ccache);
     if (name == NULL)
     {
-	PyErr_Format(k5_error, "krb5_cc_default() returned NULL");
-	return NULL;
+        PyErr_Format(k5_error, "krb5_cc_default() returned NULL");
+        return NULL;
     }
 
-    #if PY_MAJOR_VERSION >= 3
     ret = PyUnicode_FromString(name);
-    #else
-    ret = PyString_FromString(name);
-    #endif
 
     if (ret == NULL)
-	return ret;
+        return ret;
 
     code = krb5_cc_close(ctx, ccache);
     RETURN_ON_ERROR("krb5_cc_close()", code);
@@ -303,7 +299,7 @@ k5_cc_copy_creds(PyObject *self, PyObject *args)
     krb5_principal principal;
 
     if (!PyArg_ParseTuple( args, "ss", &namein, &nameout))
-	return NULL;
+        return NULL;
 
     code = krb5_init_context(&ctx);
     RETURN_ON_ERROR("krb5_init_context()", code);
@@ -342,7 +338,7 @@ k5_cc_get_principal(PyObject *self, PyObject *args)
     PyObject *ret;
 
     if (!PyArg_ParseTuple( args, "s", &ccname))
-	return NULL;
+        return NULL;
 
     code = krb5_init_context(&ctx);
     RETURN_ON_ERROR("krb5_init_context()", code);
@@ -353,14 +349,10 @@ k5_cc_get_principal(PyObject *self, PyObject *args)
     code = krb5_unparse_name(ctx, principal, &name);
     RETURN_ON_ERROR("krb5_unparse_name()", code);
 
-    #if PY_MAJOR_VERSION >= 3
     ret = PyUnicode_FromString(name);
-    #else
-    ret = PyString_FromString(name);
-    #endif
 
     if (ret == NULL)
-	return ret;
+        return ret;
 
     code = krb5_cc_close(ctx, ccache);
     RETURN_ON_ERROR("krb5_cc_close()", code);
@@ -383,7 +375,7 @@ k5_c_valid_enctype(PyObject *self, PyObject *args)
     PyObject *ret;
 
     if (!PyArg_ParseTuple( args, "s", &name))
-	return NULL;
+        return NULL;
 
     code = krb5_init_context(&ctx);
     RETURN_ON_ERROR("krb5_init_context()", code);
@@ -400,12 +392,7 @@ struct module_state {
     PyObject *error;
 };
 
-#if PY_MAJOR_VERSION >= 3
 #define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
-#else
-#define GETSTATE(m) (&_state)
-static struct module_state _state;
-#endif
 
 
 static PyMethodDef k5_methods[] = 
@@ -419,18 +406,16 @@ static PyMethodDef k5_methods[] =
     { "change_password",
             (PyCFunction) k5_change_password, METH_VARARGS },
     { "cc_default",
-	    (PyCFunction) k5_cc_default, METH_VARARGS },
+            (PyCFunction) k5_cc_default, METH_VARARGS },
     { "cc_copy_creds",
-	    (PyCFunction) k5_cc_copy_creds, METH_VARARGS },
+            (PyCFunction) k5_cc_copy_creds, METH_VARARGS },
     { "cc_get_principal",
-	    (PyCFunction) k5_cc_get_principal, METH_VARARGS },
+            (PyCFunction) k5_cc_get_principal, METH_VARARGS },
     { "c_valid_enctype",
             (PyCFunction) k5_c_valid_enctype, METH_VARARGS },
     { NULL, NULL }
 };
 
-
-#if PY_MAJOR_VERSION >= 3
 
 static int k5_traverse(PyObject *m, visitproc visit, void *arg) {
     Py_VISIT(GETSTATE(m)->error);
@@ -459,13 +444,6 @@ static struct PyModuleDef moduledef = {
 
 PyMODINIT_FUNC
 PyInit_krb5(void)
-
-#else
-#define INITERROR return
-
-void
-initkrb5(void)
-#endif
 {
     PyObject *module, *dict;
 
@@ -473,11 +451,7 @@ initkrb5(void)
     initialize_krb5_error_table();
 #endif
 
-#if PY_MAJOR_VERSION >= 3
     module = PyModule_Create(&moduledef);
-#else
-    module = Py_InitModule("krb5", k5_methods);
-#endif
 
     if (module == NULL)
         INITERROR;
@@ -489,8 +463,6 @@ initkrb5(void)
 
     PyDict_SetItemString(dict, "Error", st->error);
 
-#if PY_MAJOR_VERSION >= 3
     return module;
-#endif
 
 }

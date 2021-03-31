@@ -28,11 +28,9 @@ Get the code
 Create virtual environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* Python 2: ``virtualenv venv``
-* Python 3: ``python -mvenv venv``
-
 .. code:: bash
 
+    $ python -mvenv venv
     $ . venv/bin/activate
     $ pip install -e .
 

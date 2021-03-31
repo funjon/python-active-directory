@@ -7,7 +7,6 @@
 # "AUTHORS" for a complete overview.
 """Test suite for activedirectory.util.ldap."""
 
-from __future__ import absolute_import
 import os.path
 from activedirectory.protocol import ldap
 

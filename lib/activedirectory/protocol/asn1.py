@@ -6,11 +6,9 @@
 # Python-AD is copyright (c) 2007-2008 by the Python-AD authors. See the
 # file "AUTHORS" for a complete overview.
 
-from __future__ import absolute_import
 import re
-import six
-from six.moves import map
-from six.moves import range
+import struct
+
 Boolean = 0x01
 Integer = 0x02
 OctetString = 0x04
@@ -27,6 +25,8 @@ ClassUniversal = 0x00
 ClassApplication = 0x40
 ClassContext = 0x80
 ClassPrivate = 0xc0
+
+int2byte = struct.Struct(">B").pack
 
 
 class Error(Exception):
@@ -69,11 +69,11 @@ class Encoder(object):
         if self.m_stack is None:
             raise Error('Encoder not initialized. Call start() first.')
         if nr is None:
-            if isinstance(value, six.integer_types):
+            if isinstance(value, int):
                 nr = Integer
-            elif isinstance(value, six.string_types):
+            elif isinstance(value, str):
                 nr = OctetString
-                if isinstance(value, six.text_type):
+                if isinstance(value, str):
                     value = value.encode('utf-8')
             elif value is None:
                 nr = Null
@@ -105,11 +105,11 @@ class Encoder(object):
     def _emit_tag_short(self, nr, typ, cls):
         """Emit a short (< 31 bytes) tag."""
         assert nr < 31
-        self._emit(six.int2byte(nr | typ | cls))
+        self._emit(int2byte(nr | typ | cls))
 
     def _emit_tag_long(self, nr, typ, cls):
         """Emit a long (>= 31 bytes) tag."""
-        head = six.int2byte(typ | cls | 0x1f)
+        head = int2byte(typ | cls | 0x1f)
         self._emit(head)
         values = []
         values.append((nr & 0x7f))
@@ -118,7 +118,7 @@ class Encoder(object):
             values.append((nr & 0x7f) | 0x80)
             nr >>= 7
         values.reverse()
-        values = list(map(six.int2byte, values))
+        values = list(map(int2byte, values))
         for val in values:
             self._emit(val)
 
@@ -132,7 +132,7 @@ class Encoder(object):
     def _emit_length_short(self, length):
         """Emit the short length form (< 128 octets)."""
         assert length < 128
-        self._emit(six.int2byte(length))
+        self._emit(int2byte(length))
 
     def _emit_length_long(self, length):
         """Emit the long length form (>= 128 octets)."""
@@ -141,17 +141,17 @@ class Encoder(object):
             values.append(length & 0xff)
             length >>= 8
         values.reverse()
-        values = list(map(six.int2byte, values))
+        values = list(map(int2byte, values))
         # really for correctness as this should not happen anytime soon
         assert len(values) < 127
-        head = six.int2byte(0x80 | len(values))
+        head = int2byte(0x80 | len(values))
         self._emit(head)
         for val in values:
             self._emit(val)
 
     def _emit(self, s):
         """Emit raw bytes."""
-        assert isinstance(s, six.binary_type)
+        assert isinstance(s, bytes)
         self.m_stack[-1].append(s)
 
     def _encode_value(self, nr, value):
@@ -197,7 +197,7 @@ class Encoder(object):
                 assert i != len(values)-1
                 values[i] = 0x00
         values.reverse()
-        values = list(map(six.int2byte, values))
+        values = list(map(int2byte, values))
         return b''.join(values)
 
     def _encode_octet_string(self, value):
@@ -227,7 +227,7 @@ class Encoder(object):
                 cmp >>= 7
                 result.append(0x80 | (cmp & 0x7f))
         result.reverse()
-        result = list(map(six.int2byte, result))
+        result = list(map(int2byte, result))
         return b''.join(result)
 
 
@@ -241,8 +241,8 @@ class Decoder(object):
 
     def start(self, data):
         """Start processing `data'."""
-        if not isinstance(data, six.binary_type):
-            raise Error('Expecting %s instance.' % six.binary_type.__name__)
+        if not isinstance(data, bytes):
+            raise Error('Expecting bytes instance.')
         self.m_stack = [[0, data]]
         self.m_tag = None
 
@@ -387,10 +387,7 @@ class Decoder(object):
 
     def _decode_integer(self, bytes):
         """Decode an integer value."""
-        if six.PY2:
-            values = [ord(b) for b in bytes]
-        else:
-            values = [b for b in bytes]
+        values = [b for b in bytes]
 
         # check if the integer is normalized
         if len(values) > 1 and \
@@ -446,5 +443,5 @@ class Decoder(object):
         if len(result) == 0 or result[0] > 1599:
             raise Error('ASN1 syntax error')
         result = [result[0] // 40, result[0] % 40] + result[1:]
-        result = [six.text_type(r).encode('utf-8') for r in result]
+        result = [str(r).encode('utf-8') for r in result]
         return b'.'.join(result)

@@ -6,12 +6,10 @@
 # Python-AD is copyright (c) 2007 by the Python-AD authors. See the file
 # "AUTHORS" for a complete overview.
 
-from __future__ import absolute_import
 import time
 import random
 import logging
 
-import six
 import ldap
 import dns.resolver
 import dns.reversename
@@ -21,12 +19,23 @@ from ..protocol import netlogon
 from ..protocol.netlogon import Client as NetlogonClient
 from .exception import Error as ADError
 from ..util import compat
-from six.moves import range
 
 
 LDAP_PORT = 389
 KERBEROS_PORT = 88
 KPASSWD_PORT = 464
+
+
+def ensure_str(s):
+    """
+    Coerce *s* to str
+    """
+    if isinstance(s, bytes):
+        return s.decode('utf-8', 'strict')
+    elif isinstance(s, str):
+        return s
+    else:
+        raise TypeError("not expecting type '%s'" % type(s))
 
 
 class Locator(object):
@@ -78,7 +87,7 @@ class Locator(object):
     def locate_many(self, domain, role=None, maxservers=None):
         """Locate a list of up to `maxservers' of domain controllers."""
         result = self.locate_many_ex(domain, role, maxservers)
-        result = [ six.ensure_text(r.hostname) for r in result ]
+        result = [ ensure_str(r.hostname) for r in result ]
         return result
 
     def locate_many_ex(self, domain, role=None, maxservers=None):
@@ -200,7 +209,7 @@ class Locator(object):
         sites = [ (value, key) for key,value in sites.items() ]
         sites.sort()
         self.m_logger.debug('site detected as %s' % sites[-1][1])
-        return six.ensure_text(sites[0][1])
+        return ensure_str(sites[0][1])
 
     def _order_dns_srv(self, answer):
         """Order the results of a DNS SRV query."""
@@ -285,7 +294,7 @@ class Locator(object):
                 role == 'dc' and not (reply.flags & netlogon.SERVER_LDAP):
             self.m_logger.error('Role does not match')
             return False
-        if reply.q_domain.lower() != six.ensure_text(reply.domain).lower():
+        if reply.q_domain.lower() != ensure_str(reply.domain).lower():
             self.m_logger.error('Domain does not match')
             return False
         self.m_logger.debug('Controller is OK')
@@ -314,7 +323,7 @@ class Locator(object):
             assert hasattr(reply, 'checked')
             if not reply.checked:
                 continue
-            if self.m_site.lower() == six.ensure_text(reply.server_site).lower():
+            if self.m_site.lower() == ensure_str(reply.server_site).lower():
                 local.append(reply)
             else:
                 remote.append(reply)

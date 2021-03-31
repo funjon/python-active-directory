@@ -1,5 +1,0 @@
-syntax: glob
-*.pyc
-*.so
-build/
-test.conf

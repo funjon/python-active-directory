@@ -6,16 +6,13 @@
 # Python-AD is copyright (c) 2007 by the Python-AD authors. See the file
 # "AUTHORS" for a complete overview.
 
-from __future__ import absolute_import
 import os
 import sys
 import os.path
 from io import open
 import tempfile
 
-import six
-from six.moves import range
-from six.moves.configparser import ConfigParser
+from configparser import ConfigParser
 import pexpect
 import pytest
 
@@ -196,9 +193,9 @@ class Conf(object):
         creds = []
         while True:
             i = child.expect(['\r\n', pexpect.EOF,
-                              '\d\d/\d\d/\d\d \d\d:\d\d:\d\d\s+' \
-                              '\d\d/\d\d/\d\d \d\d:\d\d:\d\d\s+' \
-                              '([a-zA-Z0-9_/.:@-]+)\r\n'])
+                              r'\d\d/\d\d/\d\d \d\d:\d\d:\d\d\s+' \
+                              r'\d\d/\d\d/\d\d \d\d:\d\d:\d\d\s+' \
+                              r'([a-zA-Z0-9_/.:@-]+)\r\n'])
             if i == 0:
                 continue
             elif i == 1:

@@ -1,4 +1,3 @@
-from __future__ import print_function
 from activedirectory import Client, Creds, Locator, activate
 
 domain = 'freeadi.org'

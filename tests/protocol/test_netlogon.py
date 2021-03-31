@@ -6,14 +6,10 @@
 # Python-AD is copyright (c) 2007 by the Python-AD authors. See the file
 # "AUTHORS" for a complete overview.
 
-from __future__ import absolute_import
 import os.path
 import signal
 import dns.resolver
 from threading import Timer
-
-import six
-from six.moves import range
 
 import pytest
 from activedirectory.protocol import netlogon

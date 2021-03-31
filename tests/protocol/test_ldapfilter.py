@@ -6,7 +6,6 @@
 # Python-AD is copyright (c) 2007 by the Python-AD authors. See the file
 # "AUTHORS" for a complete overview.
 
-from __future__ import absolute_import
 from activedirectory.protocol import ldapfilter
 
 from ..base import assert_raises
