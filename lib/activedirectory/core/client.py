@@ -356,10 +356,10 @@ class Client(object):
             pass
         elif isinstance(attrs, list) or isinstance(attrs, tuple):
             for item in attrs:
-                if not isinstance(item, str):
-                    raise TypeError('Expecting sequence of strings.')
+                if not isinstance(item, str) and not isinstance(item, bytes):
+                    raise TypeError('Expecting sequence of strings or bytes.')
         else:
-            raise TypeError('Expecting sequence of strings.')
+            raise TypeError('Expecting sequence of strings or bytes.')
         return attrs
 
     def _search_with_paged_results(self, conn, filter, base, scope, attrs):
@@ -429,12 +429,12 @@ class Client(object):
                 raise TypeError('Expecting list of 2-tuples.')
         for type,values in attrs:
             if not isinstance(type, str):
-                raise TypeError('List items must be 2-tuple of (str, [str]).')
+                raise TypeError('List items must be 2-tuple of (str, [str|bytes]).')
             if not isinstance(values, list) and not isinstance(values, tuple):
-                raise TypeError('List items must be 2-tuple of (str, [str]).')
+                raise TypeError('List items must be 2-tuple of (str, [str|bytes]).')
             for val in values:
-                if not isinstance(val, str):
-                    raise TypeError('List items must be 2-tuple of (str, [str]).')
+                if not isinstance(val, str) and not isinstance(val, bytes):
+                    raise TypeError('List items must be 2-tuple of (str, [str|bytes]).')
         return attrs
 
     def add(self, dn, attrs, server=None):
@@ -474,12 +474,12 @@ class Client(object):
         for op,type,values in mods:
             op = self._fixup_modify_operation(op)
             if not isinstance(type, str):
-                raise TypeError('List items must be 3-tuple of (str, str, [str]).')
+                raise TypeError('List items must be 3-tuple of (str, str, [str|bytes]).')
             if not isinstance(values, list) and not isinstance(values, tuple):
-                raise TypeError('List items must be 3-tuple of (str, str, [str]).')
+                raise TypeError('List items must be 3-tuple of (str, str, [str|bytes]).')
             for val in values:
-                if not isinstance(val, str):
-                    raise TypeError('List item must be 3-tuple of (str, str, [str]).')
+                if not isinstance(val, str) and not isinstance(val, bytes):
+                    raise TypeError('List item must be 3-tuple of (str, str, [str|bytes]).')
             result.append((op,type,values))
         return result
 
